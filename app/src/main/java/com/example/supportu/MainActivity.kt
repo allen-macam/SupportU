@@ -10,41 +10,30 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
+            var showRegister by remember { mutableStateOf(false)}
+
             MaterialTheme {
-                WelcomeScreen()
+                if (showRegister) {
+                    RegisterScreen(
+                        onBackClick = {showRegister = false},
+                        onNextClick = {email, username, password ->}
+                        //Insert Account creation here
+                    )
+                }
+                else {
+                    LoginScreen(onRegisterClick = {showRegister = true})
+                }
             }
-        }
-    }
-}
-
-@Composable
-fun WelcomeScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "Welcome to SupportU",
-            style = MaterialTheme.typography.headlineMedium
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text("Your university support hub")
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Button(onClick = { }) {
-            Text("Get Started")
         }
     }
 }
