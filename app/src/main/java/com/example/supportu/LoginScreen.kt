@@ -19,10 +19,12 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun LoginScreen(
-    onRegisterClick: () -> Unit = {}
+    onRegisterClick: () -> Unit = {},
+    onLoginClick: (String, String) -> Unit = { _, _ -> }
 ) {
-    var username by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf("") }
 
     val backgroundColor = Color(0xFF0F0D13)
     val fieldColor = Color(0xFF36343B)
@@ -52,12 +54,15 @@ fun LoginScreen(
             Spacer(modifier = Modifier.weight(0.20f))
 
             TextField(
-                value = username,
-                onValueChange = { username = it },
+                value = email,
+                onValueChange = { email = it },
                 placeholder = {
-                    Text("Username", fontSize = 12.sp)
+                    Text("Email", fontSize = 12.sp)
                 },
                 singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email
+                ),
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = fieldColor,
                     unfocusedContainerColor = fieldColor,
@@ -89,6 +94,15 @@ fun LoginScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
+            if (errorMessage.isNotEmpty()) {
+                Text(
+                    text = errorMessage,
+                    color = Color(0xFFFFB4AB),
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+
             Text(
                 text = "Forgot your Password?",
                 color = Color.LightGray,
@@ -110,7 +124,20 @@ fun LoginScreen(
             ) {
                 Button(
                     onClick = {
-                        // Login functionality later
+                        errorMessage = when {
+                            email.isBlank() || password.isBlank() ->
+                                "Please enter your email and password."
+
+                            !android.util.Patterns.EMAIL_ADDRESS
+                                .matcher(email.trim()).matches() ->
+                                "Please enter a valid email address."
+
+                            else -> ""
+                        }
+
+                        if (errorMessage.isEmpty()) {
+                            onLoginClick(email.trim(), password)
+                        }
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = loginColor,
