@@ -26,18 +26,27 @@ class MainActivity : ComponentActivity() {
             var isRegistering by remember { mutableStateOf(false) }
             var isLoggedIn by remember { mutableStateOf(auth.currentUser != null) }
             var studentUsername by remember { mutableStateOf("Student") }
+            var showAcademic by remember { mutableStateOf(false) }
 
             MaterialTheme {
                 if (isLoggedIn) {
-                    HomeScreen(
-                        username = studentUsername,
-                        onLogout = {
-                            auth.signOut()
-                            isLoggedIn = false
-                            studentUsername = "Student"
-                            showRegister = false
-                        }
-                    )
+                    if (showAcademic) {
+                        AcademicScreen(
+                            onBack = { showAcademic = false }
+                        )
+                    } else {
+                        HomeScreen(
+                            username = studentUsername,
+                            onAcademicClick = { showAcademic = true },
+                            onLogout = {
+                                auth.signOut()
+                                isLoggedIn = false
+                                studentUsername = "Student"
+                                showRegister = false
+                                showAcademic = false
+                            }
+                        )
+                    }
                 } else if (showRegister) {
                     RegisterScreen(
                         onBackClick = {
@@ -148,8 +157,8 @@ class MainActivity : ComponentActivity() {
                                                 isLoggedIn = true
                                             }
                                     }
-                                        // Dashboard navigation will go here later.
-                                    }
+                                    // Dashboard navigation will go here later.
+                                }
                                 .addOnFailureListener {
                                     Toast.makeText(
                                         this@MainActivity,

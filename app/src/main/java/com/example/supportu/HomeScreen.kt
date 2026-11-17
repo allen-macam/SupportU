@@ -27,13 +27,14 @@ private val HomeMuted = Color(0xFFBEB8C8)
 @Composable
 fun HomeScreen(
     username: String = "Student",
+    onAcademicClick: () -> Unit = {},
     onLogout: () -> Unit = {}
 ) {
     var search by remember { mutableStateOf("") }
 
     Scaffold(
         containerColor = HomeBackground,
-        bottomBar = { HomeBottomBar() }
+        bottomBar = { HomeBottomBar(onAcademicClick) }
     ) { padding ->
 
         LazyColumn(
@@ -159,7 +160,8 @@ fun HomeScreen(
                                 "Academic Support",
                                 "Tutoring, advising, and study resources",
                                 Icons.Default.School,
-                                HomePurple
+                                HomePurple,
+                                onClick = onAcademicClick
                             )
                         }
                         Box(Modifier.weight(1f)) {
@@ -301,13 +303,14 @@ private fun SupportCard(
     title: String,
     description: String,
     icon: androidx.compose.ui.graphics.vector.ImageVector,
-    accent: Color
+    accent: Color,
+    onClick: () -> Unit = {}
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .height(155.dp)
-            .clickable { },
+            .clickable { onClick() },
         colors = CardDefaults.cardColors(
             containerColor = HomeCard
         ),
@@ -377,7 +380,7 @@ private fun ResourceCard(
 }
 
 @Composable
-private fun HomeBottomBar() {
+private fun HomeBottomBar(onAcademicClick: () -> Unit = {}) {
     var selectedTab by remember { mutableIntStateOf(2) }
 
     val icons = listOf(
@@ -398,7 +401,10 @@ private fun HomeBottomBar() {
         icons.forEachIndexed { index, icon ->
             NavigationBarItem(
                 selected = selectedTab == index,
-                onClick = { selectedTab = index },
+                onClick = {
+                    selectedTab = index
+                    if (index == 0) onAcademicClick()
+                },
                 icon = {
                     Icon(icon, contentDescription = labels[index])
                 },
