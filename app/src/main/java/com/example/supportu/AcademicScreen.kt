@@ -27,7 +27,8 @@ private val AcademicMuted = Color(0xFFBEB8C8)
 
 @Composable
 fun AcademicScreen(
-    onBack: () -> Unit = {}
+    onBack: () -> Unit = {},
+    onNavigate: (Int) -> Unit = {}
 ) {
     var request by remember { mutableStateOf("") }
 
@@ -36,7 +37,7 @@ fun AcademicScreen(
 
     Scaffold(
         containerColor = AcademicBackground,
-        bottomBar = { AcademicBottomBar(onHomeClick = onBack) }
+        bottomBar = { AcademicBottomBar(onNavigate = onNavigate) }
     ) { padding ->
 
         LazyColumn(
@@ -368,7 +369,7 @@ private fun AcademicResourceCard(
 }
 
 @Composable
-private fun AcademicBottomBar(onHomeClick: () -> Unit) {
+private fun AcademicBottomBar(onNavigate: (Int) -> Unit) {
     val icons = listOf(
         Icons.Default.School,
         Icons.Default.Work,
@@ -387,9 +388,7 @@ private fun AcademicBottomBar(onHomeClick: () -> Unit) {
         icons.forEachIndexed { index, icon ->
             NavigationBarItem(
                 selected = index == 0, // Academic tab is active on this screen
-                onClick = {
-                    if (index == 2) onHomeClick()
-                },
+                onClick = { onNavigate(index) },
                 icon = {
                     Icon(icon, contentDescription = labels[index])
                 },

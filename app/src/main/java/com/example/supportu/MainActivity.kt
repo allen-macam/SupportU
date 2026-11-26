@@ -27,23 +27,56 @@ class MainActivity : ComponentActivity() {
             var isLoggedIn by remember { mutableStateOf(auth.currentUser != null) }
             var studentUsername by remember { mutableStateOf("Student") }
             var showAcademic by remember { mutableStateOf(false) }
+            var showFinancial by remember { mutableStateOf(false) }
+            var showCareer by remember { mutableStateOf(false) }
+            var showCommunity by remember { mutableStateOf(false) }
+
+            // Tabs: 0 Academic, 1 Career, 2 Home, 3 Financial, 4 Community
+            fun goToTab(tab: Int) {
+                showAcademic = tab == 0
+                showCareer = tab == 1
+                showFinancial = tab == 3
+                showCommunity = tab == 4
+            }
 
             MaterialTheme {
                 if (isLoggedIn) {
-                    if (showAcademic) {
-                        AcademicScreen(
-                            onBack = { showAcademic = false }
+                    when {
+                        showAcademic -> AcademicScreen(
+                            onBack = { showAcademic = false },
+                            onNavigate = { goToTab(it) }
                         )
-                    } else {
-                        HomeScreen(
+
+                        showFinancial -> FinancialScreen(
+                            onBack = { showFinancial = false },
+                            onNavigate = { goToTab(it) }
+                        )
+
+                        showCareer -> CareerScreen(
+                            onBack = { showCareer = false },
+                            onNavigate = { goToTab(it) }
+                        )
+
+                        showCommunity -> CommunityScreen(
+                            onBack = { showCommunity = false },
+                            onNavigate = { goToTab(it) }
+                        )
+
+                        else -> HomeScreen(
                             username = studentUsername,
                             onAcademicClick = { showAcademic = true },
+                            onFinancialClick = { showFinancial = true },
+                            onCareerClick = { showCareer = true },
+                            onCommunityClick = { showCommunity = true },
                             onLogout = {
                                 auth.signOut()
                                 isLoggedIn = false
                                 studentUsername = "Student"
                                 showRegister = false
                                 showAcademic = false
+                                showFinancial = false
+                                showCareer = false
+                                showCommunity = false
                             }
                         )
                     }
